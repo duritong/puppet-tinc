@@ -12,7 +12,7 @@ class tinc::base {
    }
 
   file{'/etc/tinc':
-    source => "puppet://$server/modules/common/empty",
+    source => "puppet:///modules/common/empty",
     ensure => directory,
     # purge => true,
     recurse => true,
@@ -22,7 +22,7 @@ class tinc::base {
   }
 
   file{"/etc/tinc/nets.boot":
-    source => [ "puppet:///modules/site-tinc/netsboot/$fqdn/nets.boot",
+    source => [ "puppet:///modules/site-tinc/netsboot/${fqdn}/nets.boot",
                 "puppet:///modules/site-tinc/netsboot/nets.boot",
                 "puppet:///modules/tinc/netsboot/nets.boot",
     ]
