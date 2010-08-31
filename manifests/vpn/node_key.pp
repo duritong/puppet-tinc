@@ -5,9 +5,7 @@ define tinc::vpn::node_key_priv(
 ){
   # put key into /etc/tinc/${netname}/rsa_key.priv
   file{"/etc/tinc/${netname}/rsa_key.priv":
-    ensure => file,
-    source => [ "puppet:///modules/site-tinc/keys/$fqdn/rsa_key.priv",
-    ]
+    source => "puppet:///modules/site-tinc/keys/$fqdn/rsa_key.priv",
     owner => root, group => 0, mode => 0644;
   }
 }
@@ -19,9 +17,7 @@ define tinc::vpn::node_key_pub(
 ){
   # put key into /etc/tinc/${netname}/rsa_key.pub
   file{"/etc/tinc/${netname}/rsa_key.pub":
-    ensure => file,
-    source => [ "puppet:///modules/site-tinc/keys/$fqdn/rsa_key.pub",
-    ]
+    source => "puppet:///modules/site-tinc/keys/$fqdn/rsa_key.pub",
     owner => root, group => 0, mode => 0644;
   }
 }
