@@ -8,7 +8,6 @@ define tinc::vpn::hosts (
     ensure => $ensure,
     source => [ "puppet:///modules/site-tinc/keys/hosts/${hostname}",
     ]
-    require => File["/etc/tinc","/etc/tinc/hosts"],
     notify => Service[tinc],
     owner => root, group => 0, mode => 0600;
   }

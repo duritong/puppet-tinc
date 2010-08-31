@@ -11,7 +11,6 @@ define tinc::vpn::base (
 
   file{"/etc/tinc/${name}/hosts":
     ensure => directory,
-    require => Package['tinc'],
     notify => Service['tinc'],
     owner => root, group => 0, mode => 0644;
   }
