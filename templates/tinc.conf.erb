@@ -1,0 +1,13 @@
+Name = <%= $fqdn %>
+AddressFamily = ipv4
+Device = /dev/net/tun
+#PMTU = 1440
+Mode = switch
+#Mode = router
+
+<% if has_variable?(connectTo) -%>
+ConnectTo = <%= connectTo %>
+<% end -%>
+
+#GraphDumpFile = /tmp/tincdump
+
