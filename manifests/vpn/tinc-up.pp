@@ -1,6 +1,6 @@
 define tinc::vpn::tinc-up(
   $ensure = present,
-  $ip
+  $tinc_ip
 ){
 
  file { "/etc/tinc/${name}/tinc-up":

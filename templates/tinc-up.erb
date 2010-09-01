@@ -3,6 +3,6 @@
 ifconfig $INTERFACE 0.0.0.0
 ifconfig $INTERFACE up
 brctl addif virbr0 $INTERFACE
-ifconfig virbr0 <%= ip %> netmask 255.255.255.0
+ifconfig virbr0 <%= tinc_ip %> netmask 255.255.255.0
 ifconfig virbr0 up
 
