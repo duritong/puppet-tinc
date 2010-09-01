@@ -1,7 +1,7 @@
 # $name => Name of network=ring
 define tinc::vpn::hosts (
   $ensure = present,
-  $hostname = absent,
+  $hostname = absent
 ){
 
  file { "/etc/tinc/${name}/hosts/${hostname}":

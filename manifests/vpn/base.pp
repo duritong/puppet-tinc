@@ -1,6 +1,6 @@
 define tinc::vpn::base (
   $ensure = present,
-  $securefiles = false,
+  $securefiles = false
 ){
   file{"/etc/tinc/${name}":
     ensure => directory,
