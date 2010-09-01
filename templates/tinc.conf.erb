@@ -5,8 +5,12 @@ Device = /dev/net/tun
 Mode = switch
 #Mode = router
 
-<% unless connect_to.to_s == 'absent' -%>
-ConnectTo = <%= connect_to %>
+<% unless tinc_interface.to_s == 'absent' -%>
+BindToInterface = <%= tinc_interface.to_s %>
+
+<% end -%>
+<% connect_to_hosts.to_a.each do |connect_to_host| -%>
+ConnectTo = <%= connect_to_host %>
 <% end -%>
 
 #GraphDumpFile = /tmp/tincdump
