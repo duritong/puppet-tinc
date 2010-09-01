@@ -5,8 +5,8 @@ Device = /dev/net/tun
 Mode = switch
 #Mode = router
 
-<% if has_variable?(connectTo) -%>
-ConnectTo = <%= connectTo %>
+<% unless connect_to.to_s == 'absent' -%>
+ConnectTo = <%= connect_to %>
 <% end -%>
 
 #GraphDumpFile = /tmp/tincdump
