@@ -1,7 +1,7 @@
 # $name => Name of network=ring
 define tinc::vpn::conf (
   $ensure = present,
-  $connectTo = 'absent'
+  $connect_to = 'absent'
 ){
 
  file { "/etc/tinc/${name}/tinc.conf":
