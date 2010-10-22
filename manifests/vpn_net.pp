@@ -54,7 +54,7 @@ define tinc::vpn_net(
     file{"/etc/tinc/${name}/rsa_key.priv":
       source => $key_source_prefix ? {
         'absent' => "puppet:///modules/site-tinc/keys/${name}/${fqdn}/rsa_key.priv",
-        default => "{$key_source_prefix}/${name}/${fqdn}/rsa_key.priv",
+        default => "${key_source_prefix}/${name}/${fqdn}/rsa_key.priv",
       },
       notify => Service[tinc],
       owner => root, group => 0, mode => 0644;
@@ -62,7 +62,7 @@ define tinc::vpn_net(
     file{"/etc/tinc/${name}/rsa_key.pub":
       source => $key_source_prefix ? {
         'absent' => "puppet:///modules/site-tinc/keys/${name}/${fqdn}/rsa_key.pub",
-        default => "{$key_source_prefix}/${name}/${fqdn}/rsa_key.pub",
+        default => "${key_source_prefix}/${name}/${fqdn}/rsa_key.pub",
       },
       notify => Service[tinc],
       owner => root, group => 0, mode => 0644;
