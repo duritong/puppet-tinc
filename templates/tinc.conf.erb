@@ -1,4 +1,4 @@
-Name = <%= regsubst("${fqdn}",'[._-]+','','G') %>
+Name = <%= fqdn_tinc %>
 AddressFamily = ipv4
 Device = /dev/net/tun
 #PMTU = 1440
@@ -9,8 +9,8 @@ Mode = switch
 BindToInterface = <%= tinc_interface.to_s %>
 
 <% end -%>
-<% connect_to_hosts.to_a.each do |connect_to_host| -%>
-ConnectTo = <%= regsubst("${connect_to_host}",'[._-]+','','G') %>
+<% connect_to_hosts_tinc.to_a.each do |connect_to_host| -%>
+ConnectTo = <%= connect_to_host %>
 <% end -%>
 
 #GraphDumpFile = /tmp/tincdump
