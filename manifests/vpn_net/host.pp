@@ -5,7 +5,7 @@ define tinc::vpn_net::host(
   $source_is_prefix = false,
   $vpn_net
 ){
- nametinc = regsubst("${name}",'[._-]+','','G')
+ $nametinc = regsubst("${name}",'[._-]+','','G')
 
  file { "/etc/tinc/${vpn_net}/hosts/${nametinc}":
     ensure => $ensure,
