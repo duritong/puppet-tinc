@@ -18,7 +18,7 @@ define tinc::vpn_net(
   file{"/etc/tinc/${name}":
     require => Package['tinc'],
     notify => Service['tinc'],
-    owner => root, group => 0, mode => 0644;
+    owner => root, group => 0, mode => 0600;
   }
 
   line{"tinc_boot_net_${name}":
@@ -47,7 +47,7 @@ define tinc::vpn_net(
       force => true,
       require => Package['tinc'],
       notify => Service['tinc'],
-      owner => root, group => 0, mode => 0644;
+      owner => root, group => 0, mode => 0600;
     }
 
     file { "/etc/tinc/${name}/tinc.conf":
@@ -62,7 +62,7 @@ define tinc::vpn_net(
         default => "${key_source_prefix}/${name}/${fqdn}/rsa_key.priv",
       },
       notify => Service[tinc],
-      owner => root, group => 0, mode => 0644;
+      owner => root, group => 0, mode => 0600;
     }
     file{"/etc/tinc/${name}/rsa_key.pub":
       source => $key_source_prefix ? {
@@ -70,7 +70,7 @@ define tinc::vpn_net(
         default => "${key_source_prefix}/${name}/${fqdn}/rsa_key.pub",
       },
       notify => Service[tinc],
-      owner => root, group => 0, mode => 0644;
+      owner => root, group => 0, mode => 0600;
     }
 
 
@@ -99,7 +99,7 @@ define tinc::vpn_net(
       content => template('tinc/tinc-up.erb'),
       require => Package['bridge-utils'],
       notify => Service['tinc'],
-      owner => root, group => 0, mode => 0600;
+      owner => root, group => 0, mode => 0700;
     }
 
   } else {
