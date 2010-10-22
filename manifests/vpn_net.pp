@@ -10,6 +10,7 @@ define tinc::vpn_net(
   $tinc_bridge_interface = 'absent'
 ){
   include ::tinc
+
   file{"/etc/tinc/${name}":
     require => Package['tinc'],
     notify => Service['tinc'],

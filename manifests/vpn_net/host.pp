@@ -5,8 +5,9 @@ define tinc::vpn_net::host(
   $source_is_prefix = false,
   $vpn_net
 ){
+ nametinc = regsubst("${name}",'[._-]+','','G')
 
- file { "/etc/tinc/${vpn_net}/hosts/${name}":
+ file { "/etc/tinc/${vpn_net}/hosts/${nametinc}":
     ensure => $ensure,
     source => $source ? {
       'absent' => "puppet:///modules/site-tinc/hosts/${vpn_net}/${name}",
