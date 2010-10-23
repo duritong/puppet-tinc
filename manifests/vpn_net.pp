@@ -15,7 +15,7 @@ define tinc::vpn_net(
 
   # needed in template tinc.conf.erb
   $fqdn_tinc = regsubst("${fqdn}",'[._-]+','','G')
-  $connect_to_hosts_tinc = regsubst("${connect_to_hosts}",'[._-]+','','G')
+  $connect_to_hosts_tinc = regsubst($connect_to_hosts,'[._-]+','','G')
 
   file{"/etc/tinc/${name}":
     require => Package['tinc'],
