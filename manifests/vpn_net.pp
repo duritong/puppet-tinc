@@ -5,8 +5,9 @@ define tinc::vpn_net(
   $hosts_source = 'absent',
   $hosts_source_is_prefix = false,
   $key_source_prefix = 'absent',
-  $tinc_ip = 'absent',
   $tinc_interface = 'absent',
+  $tinc_internal_interface = 'absent',
+  $tinc_internal_ip = 'absent',
   $tinc_bridge_interface = 'absent'
 ){
   include ::tinc
@@ -91,12 +92,22 @@ define tinc::vpn_net(
       'absent' => "br${name}",
       default => $tinc_bridge_interface
     }
-    $real_tinc_ip = $tinc_ip ? {
-      'absent' => $ip,
-      default => $tinc_ip
+    $real_tinc_internal_interface = $tinc_internal_interface ? {
+      'absent' => 'eth1',
+      default => $tinc_internal_interface
+    }
+    $real_tinc_internal_ip = $tinc_internal_ip ? {
+      # 'absent' => $ip, ????
+      default => $tinc_internal_ip
     }
     file { "/etc/tinc/${name}/tinc-up":
       content => template('tinc/tinc-up.erb'),
+      require => Package['bridge-utils'],
+      notify => Service['tinc'],
+      owner => root, group => 0, mode => 0700;
+    }
+    file { "/etc/tinc/${name}/tinc-down":
+      content => template('tinc/tinc-down.erb'),
       require => Package['bridge-utils'],
       notify => Service['tinc'],
       owner => root, group => 0, mode => 0700;

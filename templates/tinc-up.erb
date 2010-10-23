@@ -3,7 +3,10 @@
 grep <%= real_tinc_bridge_interface %> /proc/net/dev | awk -F: '{ print $1 }' | grep -q <%= real_tinc_bridge_interface %>
 if [ $? -gt 0 ]; then
   brctl addbr <%= real_tinc_bridge_interface %>
-  ifconfig bridge <%= real_tinc_ip %> netmask 255.255.0.0
+  ifconfig <%= real_tinc_internal_interface %> 0.0.0.0
+  ifconfig <%= real_tinc_bridge_interface %> <%= real_tinc_internal_ip %> netmask 255.255.255.0
+  brctl addif <%= real_tinc_bridge_interface %> <%= real_tinc_internal_interface %>
+  ifconfig <%= real_tinc_internal_interface %> up
 fi
 
 ifconfig $INTERFACE 0.0.0.0
