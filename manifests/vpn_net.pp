@@ -8,7 +8,8 @@ define tinc::vpn_net(
   $tinc_interface = 'absent',
   $tinc_internal_interface = 'absent',
   $tinc_internal_ip = 'absent',
-  $tinc_bridge_interface = 'absent'
+  $tinc_bridge_interface = 'absent',
+  $shorewall_zone = 'absent'
 ){
   include ::tinc
 
@@ -114,8 +115,12 @@ define tinc::vpn_net(
     }
 
     if $use_shorewall {
+      $real_shorewall_zone = $shorewall_zone ? {
+        'absent' => 'loc',
+        default => $shorewall_zone
+      }
       shorewall::interface { "${real_tinc_bridge_interface}":
-        zone    =>  'loc',
+        zone    =>  "${real_shorewall_zone}",
         rfc1918 => true,
         options =>  'routeback,logmartians';
       }
