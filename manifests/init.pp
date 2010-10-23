@@ -4,6 +4,7 @@ class tinc {
   include bridge-utils
 
   case $operatingsystem {
+    centos: { include tinc::centos }
     default: { include tinc::base }
   }
 
