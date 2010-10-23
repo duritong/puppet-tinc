@@ -113,6 +113,14 @@ define tinc::vpn_net(
       owner => root, group => 0, mode => 0700;
     }
 
+    if $use_shorewall {
+      shorewall::interface { "${real_tinc_internal_interface}":
+        zone    =>  'loc',
+        rfc1918 => true,
+        options =>  'routeback,logmartians';
+      }
+    }
+
   } else {
     File["/etc/tinc/${name}"]{
       ensure => absent,
