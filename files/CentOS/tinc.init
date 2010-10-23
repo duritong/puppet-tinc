@@ -1,0 +1,97 @@
+#!/bin/bash
+#
+# tinc centos startup script.
+#
+# chkconfig: 35 40 60
+# description: tinc offers vpn services
+### BEGIN INIT INFO
+# Provides: $tinc
+# Required-Start: $network
+# Short-Description: start and stop tinc
+# Description: Do not taunt tinc.
+### END INIT INFO
+#
+# pull in sysconfig settings
+[ -f /etc/sysconfig/tinc ] && . /etc/sysconfig/tinc
+DAEMON="/usr/sbin/tincd"
+NAME="tinc"
+DESC="tinc daemons"
+TCONF="/etc/tinc"
+NETSFILE="$TCONF/nets.boot"
+RETVAL=0
+find_nets () {
+  if [ ! -f $NETSFILE ] ; then
+    echo "Please create $NETSFILE."
+    exit 0
+  fi
+  NETS="`egrep '^[ ]*[a-zA-Z0-9_-]+[ ]*$' $NETSFILE`"
+}
+
+start() {
+  ## Activate the server daemon
+  find_nets
+  echo $"Launching $NAME server."
+  for n in $NETS ; do
+          echo -n " $n"
+          $DAEMON -n $n $EXTRA
+      done
+
+  # RETVAL=$?
+  # echo
+  # [ $RETVAL = 0 ] && touch /var/lock/subsys/tincd
+  # return $RETVAL
+}
+stop() {
+  find_nets
+  echo -n "Stopping $DESC:"
+      for n in $NETS ; do
+          echo -n " $n"
+          $DAEMON -n $n $EXTRA -k
+      done
+
+  # RETVAL=$?
+  # [ $RETVAL = 0 ] && rm -f /var/lock/subsys/tincd /var/run/tincd/tincd.pid
+}
+reload() {
+  find_nets
+      echo -n "Reloading $DESC configuration:"
+      for n in $NETS ; do
+          echo -n " $n"
+          $DAEMON -n $n $EXTRA -kHUP
+      done
+  # RETVAL=$?
+  # [ $RETVAL = 0 ] && rm -f /var/lock/subsys/tincd /var/run/tincd/tincd.pid
+}
+restart() {
+  find_nets
+      echo -n "Restarting $DESC:"
+      for n in $NETS ; do
+    echo -n " $n"
+          $DAEMON -n $n $EXTRA -k
+          sleep 1
+          $DAEMON -n $n $EXTRA
+      done
+  # RETVAL=$?
+  # [ $RETVAL = 0 ] && rm -f /var/lock/subsys/tincd /var/run/tincd/tincd.pid
+}
+# See how we were called.
+case "$1" in
+  start)
+  start
+  ;;
+  stop)
+  stop
+  ;;
+  reload|force-reload)
+  reload
+  ;;
+  restart)
+  restart
+  ;;
+  *)
+  echo $"Usage: /sbin/service $NAME {start|stop|reload|restart|force-reload}"
+  exit 1
+  exit 1
+esac
+exit $RETVAL
+
