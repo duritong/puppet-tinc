@@ -114,7 +114,7 @@ define tinc::vpn_net(
     }
 
     if $use_shorewall {
-      shorewall::interface { "${real_tinc_internal_interface}":
+      shorewall::interface { "${real_tinc_bridge_interface}":
         zone    =>  'loc',
         rfc1918 => true,
         options =>  'routeback,logmartians';
