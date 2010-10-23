@@ -7,11 +7,6 @@ class tinc::centos inherits tinc::base {
     owner => root, group => 0, mode => 0755;
   }
 
-  Service['tinc']{
-    hasstatus => true,
-    require => [ User['tinc'], File['/etc/init.d/tinc'] ]
-  }
-
   file{'/etc/sysconfig/tinc':
     source => [ "puppet:///modules/site-tinc/CentOS/${fqdn}/tinc.sysconfig",
                 "puppet:///modules/site-tinc/tinc.sysconfig",
@@ -20,5 +15,11 @@ class tinc::centos inherits tinc::base {
     notify => Service['tinc'],
     owner => root, group => 0, mode => 0644;
   }
+
+  Service['tinc']{
+    hasstatus => true,
+    require => [ File['/etc/init.d/tinc'], File['/etc/sysconfig/tinc'] ]
+  }
+
 }
 
