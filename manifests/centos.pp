@@ -18,8 +18,6 @@ class tinc::centos inherits tinc::base {
 
   Service['tinc']{
     hasstatus => true,
-    require => [ File['/etc/init.d/tinc'], File['/etc/sysconfig/tinc'] ]
+    hasrestart => true
   }
-
 }
-
