@@ -4,22 +4,23 @@
 #
 # chkconfig: 35 40 60
 # description: tinc offers vpn services
-### BEGIN INIT INFO
-# Provides: $tinc
-# Required-Start: $network
-# Short-Description: start and stop tinc
-# Description: Do not taunt tinc.
-### END INIT INFO
-#
-# pull in sysconfig settings
-[ -f /etc/sysconfig/tinc ] && . /etc/sysconfig/tinc
+# processname: puppetmaster
+
 DAEMON="/usr/sbin/tincd"
 NAME="tinc"
 DESC="tinc daemons"
 TCONF="/etc/tinc"
 NETSFILE="$TCONF/nets.boot"
+LOCKFILE=/var/lock/subsys/tincd
 RETVAL=0
-find_nets () {
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# pull in sysconfig settings
+[ -f /etc/sysconfig/tinc ] && . /etc/sysconfig/tinc
+
+find_nets() {
   if [ ! -f $NETSFILE ] ; then
     echo "Please create $NETSFILE."
     exit 0
@@ -30,49 +31,55 @@ find_nets () {
 start() {
   ## Activate the server daemon
   find_nets
-  echo $"Launching $NAME server."
+  echo -n "Launching $NAME server:"
   for n in $NETS ; do
-          echo -n " $n"
-          $DAEMON -n $n $EXTRA
-      done
-
-  # RETVAL=$?
-  # echo
-  # [ $RETVAL = 0 ] && touch /var/lock/subsys/tincd
-  # return $RETVAL
+    echo -n " $n"
+    $DAEMON -n $n $EXTRA
+    ret=$?; [ $ret != 0 ] && RETVAL=$ret
+  done
+  [ $RETVAL = 0 ] && touch $LOCKFILE
+  return $RETVAL
 }
 stop() {
   find_nets
   echo -n "Stopping $DESC:"
-      for n in $NETS ; do
-          echo -n " $n"
-          $DAEMON -n $n $EXTRA -k
-      done
-
-  # RETVAL=$?
-  # [ $RETVAL = 0 ] && rm -f /var/lock/subsys/tincd /var/run/tincd/tincd.pid
+  for n in $NETS ; do
+    echo -n " $n"
+    $DAEMON -n $n $EXTRA -k
+    ret=$?; [ $ret != 0 ] && RETVAL=$ret
+  done
+  [ $RETVAL = 0 ] && rm -f $LOCKFILE
+  return $RETVAL
 }
 reload() {
   find_nets
-      echo -n "Reloading $DESC configuration:"
-      for n in $NETS ; do
-          echo -n " $n"
-          $DAEMON -n $n $EXTRA -kHUP
-      done
-  # RETVAL=$?
-  # [ $RETVAL = 0 ] && rm -f /var/lock/subsys/tincd /var/run/tincd/tincd.pid
+  echo -n "Reloading $DESC configuration:"
+  for n in $NETS ; do
+    echo -n " $n"
+    $DAEMON -n $n $EXTRA -kHUP
+    ret=$?; [ $ret != 0 ] && RETVAL=$ret 
+  done
+  return $RETVAL
 }
 restart() {
   find_nets
-      echo -n "Restarting $DESC:"
-      for n in $NETS ; do
+  echo -n "Restarting $DESC:"
+  for n in $NETS ; do
     echo -n " $n"
-          $DAEMON -n $n $EXTRA -k
-          sleep 1
-          $DAEMON -n $n $EXTRA
-      done
-  # RETVAL=$?
-  # [ $RETVAL = 0 ] && rm -f /var/lock/subsys/tincd /var/run/tincd/tincd.pid
+    $DAEMON -n $n $EXTRA -k
+    sleep 1
+    $DAEMON -n $n $EXTRA
+    ret=$?; [ $ret != 0 ] && RETVAL=$ret
+  done
+  return $RETVAL
+}
+rh_status(){
+  find_nets
+  for n in $NETS; do
+    status -p /var/run/tinc.${n}.pid $DAEMON
+    ret=$?; [ $ret != 0 ] && RETVAL=$ret
+  done
+  return $RETVAL
 }
 # See how we were called.
 case "$1" in
@@ -88,9 +95,11 @@ case "$1" in
   restart)
   restart
   ;;
+  status)
+  rh_status
+  ;;
   *)
-  echo $"Usage: /sbin/service $NAME {start|stop|reload|restart|force-reload}"
-  exit 1
+  echo $"Usage: /sbin/service $NAME {start|stop|reload|restart|force-reload|status}"
   exit 1
 esac
 exit $RETVAL
