@@ -48,6 +48,7 @@ stop() {
     $DAEMON -n $n $EXTRA -k
     ret=$?; [ $ret != 0 ] && RETVAL=$ret
   done
+  echo
   [ $RETVAL = 0 ] && rm -f $LOCKFILE
   return $RETVAL
 }
@@ -59,6 +60,7 @@ reload() {
     $DAEMON -n $n $EXTRA -kHUP
     ret=$?; [ $ret != 0 ] && RETVAL=$ret 
   done
+  echo
   return $RETVAL
 }
 restart() {
@@ -71,6 +73,7 @@ restart() {
     $DAEMON -n $n $EXTRA
     ret=$?; [ $ret != 0 ] && RETVAL=$ret
   done
+  echo
   return $RETVAL
 }
 rh_status(){
