@@ -4,12 +4,13 @@ define tinc::vpn_net(
   $connect_on_boot = true,
   $hosts_source = 'absent',
   $hosts_source_is_prefix = false,
-  $key_source = 'file',
-  $key_source_prefix = 'absent',
-  $tinc_interface = 'absent',
-  $tinc_internal_interface = 'absent',
+  $key_source_path = 'absent',
+  $tinc_interface = 'eth0',
+  $tinc_internal_interface = 'eth1',
   $tinc_internal_ip = 'absent',
   $tinc_bridge_interface = 'absent',
+  $port = '655',
+  $compression = '9',
   $shorewall_zone = 'absent'
 ){
   include ::tinc
@@ -38,6 +39,14 @@ define tinc::vpn_net(
     notify => Service['tinc'],
   }
 
+  @@file { "/etc/tinc/${vpn_net}/hosts/${name_tinc}":
+    ensure => $ensure,
+    notify => Service[tinc],
+    tag => "tinc_host_${name}",
+    owner => root, group => 0, mode => 0600;
+  }
+
+
   if $ensure == 'present' {
     File["/etc/tinc/${name}"]{
       ensure => directory,
@@ -59,68 +68,33 @@ define tinc::vpn_net(
       owner => root, group => 0, mode => 0600;
     }
 
+    if $key_source_path == 'absent' {
+      fail("You need to set \$key_source_prefix for $name to generate keys on the master!")
+    }
+    $tinc_keys = tinc_keygen($name,"${key_source_path}/${name}/${fqdn}")
     file{"/etc/tinc/${name}/rsa_key.priv":
+      content => $tinc_keys[1],
       notify => Service[tinc],
       owner => root, group => 0, mode => 0600;
     }
     file{"/etc/tinc/${name}/rsa_key.pub":
+      content => $tinc_keys[0],
       notify => Service[tinc],
       owner => root, group => 0, mode => 0600;
-    }
-    if $key_source == 'file' {
-      File["/etc/tinc/${name}/rsa_key.priv"]{
-        source => $key_source_prefix ? {
-          'absent' => "puppet:///modules/site-tinc/keys/${name}/${fqdn}/rsa_key.priv",
-          default => "${key_source_prefix}/${name}/${fqdn}/rsa_key.priv",
-        }
-      }
-      File["/etc/tinc/${name}/rsa_key.pub"]{
-        source => $key_source_prefix ? {
-          'absent' => "puppet:///modules/site-tinc/keys/${name}/${fqdn}/rsa_key.pub",
-          default => "${key_source_prefix}/${name}/${fqdn}/rsa_key.pub",
-        }
-      }
-    } elsif $key_source == 'master' {
-      if $key_source_prefix == 'absent' {
-        fail("You need to set \$key_source_prefix for $name to generate keys on the master!")
-      }
-      $tinc_keys = tinc_keygen($name,"${key_source_prefix}/${name}/${fqdn}")
-      File["/etc/tinc/${name}/rsa_key.priv"]{
-        content => $tinc_keys[0]
-      }
-      File["/etc/tinc/${name}/rsa_key.pub"]{
-        content => $tinc_keys[1]
-      }
-    } else {
-      fail("No such \$key_source (${key_source}) available")
-    }
-
-
-    # always include myself in the hosts dir
-    tinc::vpn_net::host{$fqdn:
-      source => $hosts_source,
-      source_is_prefix => $hosts_source_is_prefix,
-      vpn_net => $name
-    }
-    # include all the hosts we should connect to
-    tinc::vpn_net::host{$connect_to_hosts:
-      source => $hosts_source,
-      source_is_prefix => $hosts_source_is_prefix,
-      vpn_net => $name
     }
 
     $real_tinc_bridge_interface = $tinc_bridge_interface ? {
       'absent' => "br${name}",
       default => $tinc_bridge_interface
     }
-    $real_tinc_internal_interface = $tinc_internal_interface ? {
-      'absent' => 'eth1',
-      default => $tinc_internal_interface
+
+    if $tinc_internal_ip == 'absent' {
+      $tinc_orig_ifaddr = "ipaddress_${tinc_internal_interface}"
+      $real_tinc_internal_ip = inline_template("<%= scope.lookupvar(tinc_orig_ifaddr) %>")
+    } else {
+      $real_tinc_internal_ip = $tinc_internal_ip
     }
-    $real_tinc_internal_ip = $tinc_internal_ip ? {
-      # 'absent' => $ip, ????
-      default => $tinc_internal_ip
-    }
+
     file { "/etc/tinc/${name}/tinc-up":
       content => template('tinc/tinc-up.erb'),
       require => Package['bridge-utils'],
@@ -133,6 +107,11 @@ define tinc::vpn_net(
       notify => Service['tinc'],
       owner => root, group => 0, mode => 0700;
     }
+    File["/etc/tinc/${vpn_net}/hosts/${name_tinc}"]{
+      content => template('tinc/host.erb'),
+    }
+    File<<| tag == "tinc_host_${name}" |>>
+
 
     if $use_shorewall {
       $real_shorewall_zone = $shorewall_zone ? {
