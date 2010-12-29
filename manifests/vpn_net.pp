@@ -4,6 +4,7 @@ define tinc::vpn_net(
   $connect_on_boot = true,
   $hosts_source = 'absent',
   $hosts_source_is_prefix = false,
+  $key_source = 'file',
   $key_source_prefix = 'absent',
   $tinc_interface = 'absent',
   $tinc_internal_interface = 'absent',
@@ -59,20 +60,39 @@ define tinc::vpn_net(
     }
 
     file{"/etc/tinc/${name}/rsa_key.priv":
-      source => $key_source_prefix ? {
-        'absent' => "puppet:///modules/site-tinc/keys/${name}/${fqdn}/rsa_key.priv",
-        default => "${key_source_prefix}/${name}/${fqdn}/rsa_key.priv",
-      },
       notify => Service[tinc],
       owner => root, group => 0, mode => 0600;
     }
     file{"/etc/tinc/${name}/rsa_key.pub":
-      source => $key_source_prefix ? {
-        'absent' => "puppet:///modules/site-tinc/keys/${name}/${fqdn}/rsa_key.pub",
-        default => "${key_source_prefix}/${name}/${fqdn}/rsa_key.pub",
-      },
       notify => Service[tinc],
       owner => root, group => 0, mode => 0600;
+    }
+    if $key_source == 'file' {
+      File["/etc/tinc/${name}/rsa_key.priv"]{
+        source => $key_source_prefix ? {
+          'absent' => "puppet:///modules/site-tinc/keys/${name}/${fqdn}/rsa_key.priv",
+          default => "${key_source_prefix}/${name}/${fqdn}/rsa_key.priv",
+        }
+      }
+      File["/etc/tinc/${name}/rsa_key.pub"]{
+        source => $key_source_prefix ? {
+          'absent' => "puppet:///modules/site-tinc/keys/${name}/${fqdn}/rsa_key.pub",
+          default => "${key_source_prefix}/${name}/${fqdn}/rsa_key.pub",
+        }
+      }
+    } elsif $key_source == 'master' {
+      if $key_source_prefix == 'absent' {
+        fail("You need to set \$key_source_prefix for $name to generate keys on the master!")
+      }
+      $tinc_keys = tinc_keygen($name,"${key_source_prefix}/${name}/${fqdn}")
+      File["/etc/tinc/${name}/rsa_key.priv"]{
+        content => $tinc_keys[0]
+      }
+      File["/etc/tinc/${name}/rsa_key.pub"]{
+        content => $tinc_keys[1]
+      }
+    } else {
+      fail("No such \$key_source (${key_source}) available")
     }
 
 
