@@ -2,8 +2,6 @@ define tinc::vpn_net(
   $ensure = present,
   $connect_to_hosts = [],
   $connect_on_boot = true,
-  $hosts_source = 'absent',
-  $hosts_source_is_prefix = false,
   $key_source_path = 'absent',
   $tinc_interface = 'eth0',
   $tinc_internal_interface = 'eth1',
