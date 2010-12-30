@@ -7,6 +7,8 @@ Mode = switch
 
 BindToInterface = <%= tinc_interface.to_s %>
 
-<% connect_to_hosts_tinc.to_a.each do |connect_to_host| -%>
+<% tinc_hosts.to_a.each do |connect_to_host| -%>
+<%- unless connect_to_host.to_s == scope.lookupvar('fqdn') %>
 ConnectTo = <%= connect_to_host %>
+<%- end %>
 <% end -%>

@@ -1,6 +1,6 @@
 define tinc::vpn_net(
   $ensure = present,
-  $connect_to_hosts = [],
+  $hosts_path = 'absent',
   $connect_on_boot = true,
   $key_source_path = 'absent',
   $tinc_interface = 'eth0',
@@ -15,7 +15,6 @@ define tinc::vpn_net(
 
   # needed in template tinc.conf.erb
   $fqdn_tinc = regsubst("${fqdn}",'[._-]+','','G')
-  $connect_to_hosts_tinc = regsubst($connect_to_hosts,'[._-]+','','G')
 
   file{"/etc/tinc/${name}":
     require => Package['tinc'],
@@ -37,11 +36,23 @@ define tinc::vpn_net(
     notify => Service['tinc'],
   }
 
+  $real_hosts_path = $hosts_path ? {
+    'absent' => "/etc/tinc/${vpn_net}/hosts.list",
+    default => $hosts_path
+  }
+
   @@file { "/etc/tinc/${vpn_net}/hosts/${name_tinc}":
     ensure => $ensure,
     notify => Service[tinc],
     tag => "tinc_host_${name}",
     owner => root, group => 0, mode => 0600;
+  }
+
+  @@line{"${fqdn_tinc}_for_${name}":
+    ensure => $ensure,
+    file => $real_hosts_path,
+    line => $fqdn_tinc,
+    tag => 'tinc_hosts_file'
   }
 
 
@@ -59,6 +70,10 @@ define tinc::vpn_net(
       notify => Service['tinc'],
       owner => root, group => 0, mode => 0600;
     }
+
+    $tinc_hosts_list = tfile($real_hosts_path)
+    $tinc_all_hosts = split($tinc_hosts_list,"\n")
+    $tinc_hosts = array_del($tinc_all_hosts,$fqdn_tinc)
 
     file { "/etc/tinc/${name}/tinc.conf":
       content => template('tinc/tinc.conf.erb'),
