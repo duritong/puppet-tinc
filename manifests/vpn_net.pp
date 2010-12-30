@@ -37,11 +37,11 @@ define tinc::vpn_net(
   }
 
   $real_hosts_path = $hosts_path ? {
-    'absent' => "/etc/tinc/${vpn_net}/hosts.list",
+    'absent' => "/etc/tinc/${name}/hosts.list",
     default => $hosts_path
   }
 
-  @@file { "/etc/tinc/${vpn_net}/hosts/${name_tinc}":
+  @@file { "/etc/tinc/${name}/hosts/${fqdn_tinc}":
     ensure => $ensure,
     notify => Service[tinc],
     tag => "tinc_host_${name}",
@@ -127,7 +127,7 @@ define tinc::vpn_net(
       notify => Service['tinc'],
       owner => root, group => 0, mode => 0700;
     }
-    File["/etc/tinc/${vpn_net}/hosts/${name_tinc}"]{
+    File["/etc/tinc/${name}/hosts/${fqdn_tinc}"]{
       content => template('tinc/host.erb'),
     }
     File<<| tag == "tinc_host_${name}" |>>
