@@ -86,12 +86,12 @@ define tinc::vpn_net(
     }
     $tinc_keys = tinc_keygen($name,"${key_source_path}/${name}/${fqdn}")
     file{"/etc/tinc/${name}/rsa_key.priv":
-      content => $tinc_keys[1],
+      content => $tinc_keys[0],
       notify => Service[tinc],
       owner => root, group => 0, mode => 0600;
     }
     file{"/etc/tinc/${name}/rsa_key.pub":
-      content => $tinc_keys[0],
+      content => $tinc_keys[1],
       notify => Service[tinc],
       owner => root, group => 0, mode => 0600;
     }
