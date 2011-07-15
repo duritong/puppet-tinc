@@ -61,7 +61,6 @@ define tinc::vpn_net(
       ensure => directory,
     }
     file{"/etc/tinc/${name}/hosts":
-      source => 'puppet:///modules/common/empty',
       ensure => directory,
       recurse => true,
       purge => true,
