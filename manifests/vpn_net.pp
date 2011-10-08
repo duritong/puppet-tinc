@@ -72,7 +72,7 @@ define tinc::vpn_net(
 
     $tinc_hosts_list = tfile($real_hosts_path)
     $tinc_all_hosts = split($tinc_hosts_list,"\n")
-    $tinc_hosts = array_del($tinc_all_hosts,$fqdn_tinc)
+    $tinc_hosts = delete($tinc_all_hosts,$fqdn_tinc)
 
     file { "/etc/tinc/${name}/tinc.conf":
       content => template('tinc/tinc.conf.erb'),
