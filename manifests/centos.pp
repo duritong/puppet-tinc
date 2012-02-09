@@ -1,15 +1,16 @@
 class tinc::centos inherits tinc::base {
-
-  file{'/etc/sysconfig/tinc':
-    source => [ "puppet:///modules/site-tinc/CentOS/${fqdn}/tinc.sysconfig",
-                "puppet:///modules/site-tinc/tinc.sysconfig",
-                "puppet:///modules/tinc/${operatingsystem}/tinc.sysconfig" ],
-    require => Package['tinc'],
-    notify => Service['tinc'],
-    owner => root, group => 0, mode => 0644;
+  file {
+    '/etc/sysconfig/tinc' :
+      source => ["puppet:///modules/site-tinc/CentOS/${::fqdn}/tinc.sysconfig",
+      "puppet:///modules/site-tinc/tinc.sysconfig",
+      "puppet:///modules/tinc/${::operatingsystem}/tinc.sysconfig"],
+      require => Package['tinc'],
+      notify => Service['tinc'],
+      owner => root,
+      group => 0,
+      mode => 0644 ;
   }
-
-  Service['tinc']{
+  Service['tinc'] {
     hasstatus => true,
     hasrestart => true
   }

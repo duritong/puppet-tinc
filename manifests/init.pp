@@ -1,14 +1,10 @@
-# manifests/init.pp - module to manage tinc-vpn
-
 class tinc {
-  include bridge-utils
-
-  case $operatingsystem {
-    centos: { include tinc::centos }
-    default: { include tinc::base }
+  require bridge-utils
+  case $::operatingsystem {
+    centos : { include tinc::centos }
+    default : { include tinc::base }
   }
-
-  if $use_shorewall {
+  if hiera('use_shorewall', false) {
     include shorewall::rules::tinc
   }
 }

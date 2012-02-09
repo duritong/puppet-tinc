@@ -14,7 +14,7 @@ define tinc::vpn_net(
   include ::tinc
 
   # needed in template tinc.conf.erb
-  $fqdn_tinc = regsubst("${fqdn}",'[._-]+','','G')
+  $fqdn_tinc = regsubst("${::fqdn}",'[._-]+','','G')
 
   file{"/etc/tinc/${name}":
     require => Package['tinc'],
@@ -22,7 +22,7 @@ define tinc::vpn_net(
     owner => root, group => 0, mode => 0600;
   }
 
-  line{"tinc_boot_net_${name}":
+  file_line{"tinc_boot_net_${name}":
     ensure => $ensure ? {
       'present' => $connect_on_boot ? {
         true => 'present',
@@ -31,7 +31,7 @@ define tinc::vpn_net(
       default => 'absent'
     },
     line => $name,
-    file => '/etc/tinc/nets.boot',
+    path => '/etc/tinc/nets.boot',
     require => File['/etc/tinc/nets.boot'],
     notify => Service['tinc'],
   }
@@ -48,9 +48,9 @@ define tinc::vpn_net(
     owner => root, group => 0, mode => 0600;
   }
 
-  @@line{"${fqdn_tinc}_for_${name}":
+  @@file_line{"${fqdn_tinc}_for_${name}":
     ensure => $ensure,
-    file => $real_hosts_path,
+    path => $real_hosts_path,
     line => $fqdn_tinc,
     tag => 'tinc_hosts_file'
   }
@@ -101,11 +101,11 @@ define tinc::vpn_net(
     }
 
     if $tinc_internal_ip == 'absent' {
-      $tinc_br_ifaddr = "ipaddress_${real_tinc_bridge_interface}"
+      $tinc_br_ifaddr = "::ipaddress_${real_tinc_bridge_interface}"
       $tinc_br_ip = inline_template("<%= scope.lookupvar(tinc_br_ifaddr) %>")
       case $tinc_br_ip {
         '',undef: {
-          $tinc_orig_ifaddr = "ipaddress_${tinc_internal_interface}"
+          $tinc_orig_ifaddr = "::ipaddress_${tinc_internal_interface}"
           $real_tinc_internal_ip = inline_template("<%= scope.lookupvar(tinc_orig_ifaddr) %>")
         }
         default: { $real_tinc_internal_ip = $tinc_br_ip }
@@ -132,7 +132,7 @@ define tinc::vpn_net(
     File<<| tag == "tinc_host_${name}" |>>
 
 
-    if $use_shorewall {
+    if hiera('use_shorewall',false) {
       $real_shorewall_zone = $shorewall_zone ? {
         'absent' => 'loc',
         default => $shorewall_zone

@@ -4,5 +4,5 @@ class tinc::puppetmaster($tinc_storage_path){
     owner => root, group => puppet, mode => '0660';
   }
 
-  Line<<| tag == 'tinc_hosts_file' |>>
+  File_line<<| tag == 'tinc_hosts_file' |>>
 }
