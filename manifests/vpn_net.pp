@@ -133,12 +133,11 @@ define tinc::vpn_net(
 
 
     if hiera('use_shorewall',false) {
-      $real_shorewall_zone = $shorewall_zone ? {
-        'absent' => 'loc',
-        default => $shorewall_zone
-      }
       shorewall::interface { "${real_tinc_bridge_interface}":
-        zone    =>  "${real_shorewall_zone}",
+        zone    => $shorewall_zone ? {
+          'absent' => 'loc',
+          default => $shorewall_zone
+        },
         rfc1918 => true,
         options =>  'routeback,logmartians';
       }
