@@ -116,13 +116,11 @@ define tinc::vpn_net(
 
     file { "/etc/tinc/${name}/tinc-up":
       content => template('tinc/tinc-up.erb'),
-      require => Package['bridge-utils'],
       notify => Service['tinc'],
       owner => root, group => 0, mode => 0700;
     }
     file { "/etc/tinc/${name}/tinc-down":
       content => template('tinc/tinc-down.erb'),
-      require => Package['bridge-utils'],
       notify => Service['tinc'],
       owner => root, group => 0, mode => 0700;
     }

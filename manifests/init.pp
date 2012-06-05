@@ -1,5 +1,5 @@
 class tinc {
-  require bridge-utils
+  require bridge_utils
   case $::operatingsystem {
     centos: { include tinc::centos }
     debian: { include tinc::debian }

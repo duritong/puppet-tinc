@@ -1,8 +1,8 @@
 class tinc::centos inherits tinc::base {
   file {
     '/etc/sysconfig/tinc' :
-      source => ["puppet:///modules/site-tinc/CentOS/${::fqdn}/tinc.sysconfig",
-      "puppet:///modules/site-tinc/tinc.sysconfig",
+      source => ["puppet:///modules/site_tinc/CentOS/${::fqdn}/tinc.sysconfig",
+      "puppet:///modules/site_tinc/tinc.sysconfig",
       "puppet:///modules/tinc/${::operatingsystem}/tinc.sysconfig"],
       require => Package['tinc'],
       notify => Service['tinc'],
