@@ -74,7 +74,7 @@ describe "the tinc_keygen function" do
       File.stubs(:exists?).with("/tmp/a/b/rsa_key.priv").returns(false)
       File.stubs(:exists?).with("/tmp/a/b/rsa_key.pub").returns(false)
       File.stubs(:directory?).with("/tmp/a/b").returns(false)
-      Puppet::Util.expects(:recmkdir).with("/tmp/a/b",0700)
+      FileUtils.expects(:mkdir_p).with("/tmp/a/b", :mode => 0700)
       Puppet::Util.expects(:execute).returns("foo\nbar\nGenerating 2048 bits keys\n++++\n---")
       result = @scope.function_tinc_keygen(['foo','/tmp/a/b'])
       result.length.should == 2

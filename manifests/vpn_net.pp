@@ -83,7 +83,7 @@ define tinc::vpn_net(
     if $key_source_path == 'absent' {
       fail("You need to set \$key_source_prefix for $name to generate keys on the master!")
     }
-    $tinc_keys = tinc_keygen($name,"${key_source_path}/${name}/${fqdn}")
+    $tinc_keys = tinc_keygen($name,"${key_source_path}/${name}/${::fqdn}")
     file{"/etc/tinc/${name}/rsa_key.priv":
       content => $tinc_keys[0],
       notify => Service[tinc],
