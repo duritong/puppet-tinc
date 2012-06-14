@@ -9,9 +9,12 @@ define tinc::vpn_net(
   $tinc_bridge_interface = 'absent',
   $port = '655',
   $compression = '9',
+  $manage_shorewall = false,
   $shorewall_zone = 'absent'
 ){
-  include ::tinc
+  class{'tinc':
+    manage_shorewall => $manage_shorewall
+  }
 
   # needed in template tinc.conf.erb
   $fqdn_tinc = regsubst("${::fqdn}",'[._-]+','','G')
@@ -130,8 +133,8 @@ define tinc::vpn_net(
     File<<| tag == "tinc_host_${name}" |>>
 
 
-    if hiera('use_shorewall',false) {
-      shorewall::interface { "${real_tinc_bridge_interface}":
+    if $manage_shorewall {
+      shorewall::interface { $real_tinc_bridge_interface:
         zone    => $shorewall_zone ? {
           'absent' => 'loc',
           default => $shorewall_zone
