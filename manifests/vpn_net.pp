@@ -8,7 +8,7 @@ define tinc::vpn_net(
   $tinc_internal_ip = 'absent',
   $tinc_bridge_interface = 'absent',
   $port = '655',
-  $compression = '9',
+  $compression = '10',
   $manage_shorewall = false,
   $shorewall_zone = 'absent'
 ){
