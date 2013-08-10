@@ -7,6 +7,7 @@ define tinc::vpn_net(
   $tinc_internal_interface = 'eth1',
   $tinc_internal_ip = 'absent',
   $tinc_bridge_interface = 'absent',
+  $override_mtu = false,
   $port = '655',
   $compression = '10',
   $manage_shorewall = false,
