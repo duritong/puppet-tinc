@@ -134,8 +134,8 @@ define tinc::vpn_net(
       $real_tinc_internal_ip = $tinc_internal_ip
     }
     if $tinc_internal_netmask == 'absent' {
-      $tinc_br_netmask = "::netmask_${real_tinc_bridge_interface}"
-      $tinc_br_netmask = inline_template('<%= scope.lookupvar(@tinc_br_netmask) %>')
+      $tinc_br_netmask_fact = "::netmask_${real_tinc_bridge_interface}"
+      $tinc_br_netmask = inline_template('<%= scope.lookupvar(@tinc_br_netmask_fact) %>')
       case $tinc_br_netmask {
         '',undef: {
           $tinc_orig_netmask = "::netmask_${tinc_internal_interface}"
