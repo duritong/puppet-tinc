@@ -7,6 +7,7 @@ define tinc::vpn_net(
   $tinc_interface           = 'eth0',
   $tinc_internal_interface  = 'eth1',
   $tinc_internal_ip         = 'absent',
+  $tinc_internal_netmask    = 'absent',
   $tinc_bridge_interface    = 'absent',
   $override_mtu             = false,
   $port                     = '655',
@@ -131,6 +132,19 @@ define tinc::vpn_net(
       }
     } else {
       $real_tinc_internal_ip = $tinc_internal_ip
+    }
+    if $tinc_internal_netmask == 'absent' {
+      $tinc_br_netmask = "::netmask_${real_tinc_bridge_interface}"
+      $tinc_br_netmask = inline_template('<%= scope.lookupvar(@tinc_br_netmask) %>')
+      case $tinc_br_netmask {
+        '',undef: {
+          $tinc_orig_netmask = "::netmask_${tinc_internal_interface}"
+          $real_tinc_internal_netmask = inline_template('<%= scope.lookupvar(@tinc_orig_netmask) %>')
+        }
+        default: { $real_tinc_internal_netmask = $tinc_br_netmask }
+      }
+    } else {
+      $real_tinc_internal_netmask = $tinc_internal_netmask
     }
 
     file { "/etc/tinc/${name}/tinc-up":
