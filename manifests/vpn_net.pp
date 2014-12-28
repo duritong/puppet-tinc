@@ -21,10 +21,19 @@ define tinc::vpn_net(
 
   # needed in template tinc.conf.erb
   $fqdn_tinc = regsubst($::fqdn,'[._-]+','','G')
+  if $tinc::uses_systemd {
+    $service_name = "tincd@${name}"
+    service{$service_name:
+      ensure => running,
+      enable => true,
+    }
+  } else {
+    $service_name = 'tinc'
+  }
 
   file{"/etc/tinc/${name}":
     require => Package['tinc'],
-    notify  => Service['tinc'],
+    notify  => Service[$service_name],
     owner   => root,
     group   => 0,
     mode    => '0600';
@@ -43,7 +52,7 @@ define tinc::vpn_net(
     line    => $name,
     path    => '/etc/tinc/nets.boot',
     require => File['/etc/tinc/nets.boot'],
-    notify  => Service['tinc'],
+    notify  => Service[$service_name],
   }
 
   $real_hosts_path = $hosts_path ? {
@@ -53,7 +62,6 @@ define tinc::vpn_net(
 
   @@file { "/etc/tinc/${name}/hosts/${fqdn_tinc}":
     ensure  => $ensure,
-    notify  => Service[tinc],
     tag     => "tinc_host_${name}",
     owner   => root,
     group   => 0,
@@ -61,24 +69,24 @@ define tinc::vpn_net(
   }
 
   @@file_line{"${fqdn_tinc}_for_${name}":
-    ensure  => $ensure,
-    path    => $real_hosts_path,
-    line    => $fqdn_tinc,
-    tag     => 'tinc_hosts_file'
+    ensure => $ensure,
+    path   => $real_hosts_path,
+    line   => $fqdn_tinc,
+    tag    => 'tinc_hosts_file'
   }
 
 
   if $ensure == 'present' {
     File["/etc/tinc/${name}"]{
-      ensure => directory,
+      ensure  => directory,
+      require => Package['tinc'],
     }
     file{"/etc/tinc/${name}/hosts":
       ensure  => directory,
       recurse => true,
       purge   => true,
       force   => true,
-      require => Package['tinc'],
-      notify  => Service['tinc'],
+      notify  => Service[$service_name],
       owner   => root,
       group   => 0,
       mode    => '0600';
@@ -90,7 +98,7 @@ define tinc::vpn_net(
 
     file { "/etc/tinc/${name}/tinc.conf":
       content => template('tinc/tinc.conf.erb'),
-      notify  => Service[tinc],
+      notify  => Service[$service_name],
       owner   => root,
       group   => 0,
       mode    => '0600';
@@ -102,14 +110,14 @@ define tinc::vpn_net(
     $tinc_keys = tinc_keygen($name,"${key_source_path}/${name}/${::fqdn}")
     file{"/etc/tinc/${name}/rsa_key.priv":
       content => $tinc_keys[0],
-      notify  => Service[tinc],
+      notify  => Service[$service_name],
       owner   => root,
       group   => 0,
       mode    => '0600';
     }
     file{"/etc/tinc/${name}/rsa_key.pub":
       content => $tinc_keys[1],
-      notify  => Service[tinc],
+      notify  => Service[$service_name],
       owner   => root,
       group   => 0,
       mode    => '0600';
@@ -149,14 +157,14 @@ define tinc::vpn_net(
 
     file { "/etc/tinc/${name}/tinc-up":
       content => template('tinc/tinc-up.erb'),
-      notify  => Service['tinc'],
+      notify  => Service[$service_name],
       owner   => root,
       group   => 0,
       mode    => '0700';
     }
     file { "/etc/tinc/${name}/tinc-down":
       content => template('tinc/tinc-down.erb'),
-      notify  => Service['tinc'],
+      notify  => Service[$service_name],
       owner   => root,
       group   => 0,
       mode    => '0700';
