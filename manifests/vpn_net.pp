@@ -79,7 +79,6 @@ define tinc::vpn_net(
   if $ensure == 'present' {
     File["/etc/tinc/${name}"]{
       ensure  => directory,
-      require => Package['tinc'],
     }
     file{"/etc/tinc/${name}/hosts":
       ensure  => directory,
