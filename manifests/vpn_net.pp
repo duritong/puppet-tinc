@@ -142,11 +142,11 @@ define tinc::vpn_net(
     }
     if $tinc_internal_netmask == 'absent' {
       $tinc_br_netmask_fact = "::netmask_${real_tinc_bridge_interface}"
-      $tinc_br_netmask = inline_template('<%= scope.lookupvar(@tinc_br_netmask_fact).split(".").map { |e| e.to_i.to_s(2).rjust(8, "0") }.join.count("1").to_s %>')
+      $tinc_br_netmask = inline_template('<%= n=scope.lookupvar(@tinc_br_netmask_fact); n.nil? ? n : n.split(".").map { |e| e.to_i.to_s(2).rjust(8, "0") }.join.count("1").to_s %>')
       case $tinc_br_netmask {
         '',undef: {
           $tinc_orig_netmask = "::netmask_${tinc_internal_interface}"
-          $real_tinc_internal_netmask = inline_template('<%= scope.lookupvar(@tinc_orig_netmask).split(".").map { |e| e.to_i.to_s(2).rjust(8, "0") }.join.count("1").to_s %>')
+          $real_tinc_internal_netmask = inline_template('<%= n=scope.lookupvar(@tinc_orig_netmask); n.nil? ? n : n.split(".").map { |e| e.to_i.to_s(2).rjust(8, "0") }.join.count("1").to_s %>')
         }
         default: { $real_tinc_internal_netmask = $tinc_br_netmask }
       }
