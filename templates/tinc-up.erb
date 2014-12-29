@@ -3,8 +3,8 @@
 grep <%= @real_tinc_bridge_interface %> /proc/net/dev | awk -F: '{ print $1 }' | grep -q <%= @real_tinc_bridge_interface %>
 if [ $? -gt 0 ]; then
   brctl addbr <%= @real_tinc_bridge_interface %>
-  ip addr delete <%= @real_tinc_internal_ip %>/<%= @real_tinc_internal_netmask %> <%= @tinc_internal_interface %>
-  ip addr add <%= @real_tinc_internal_ip %>/<%= @real_tinc_internal_netmask %> <%= @real_tinc_bridge_interface %>
+  ip addr delete <%= @real_tinc_internal_ip %>/<%= @real_tinc_internal_netmask %> dev <%= @tinc_internal_interface %>
+  ip addr add <%= @real_tinc_internal_ip %>/<%= @real_tinc_internal_netmask %> dev <%= @real_tinc_bridge_interface %>
   brctl addif <%= @real_tinc_bridge_interface %> <%= @tinc_internal_interface %>
   ip link set dev <%= @tinc_internal_interface %> up
 fi
