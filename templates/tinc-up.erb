@@ -10,6 +10,7 @@ if [ $? -gt 0 ]; then
 fi
 
 brctl addif <%= @real_tinc_bridge_interface %> $INTERFACE
+ip link set dev   <%= @real_tinc_bridge_interface %> up
 ip link set dev  $INTERFACE up
 <% if @override_mtu -%>
 ip link set dev $INTERFACE mtu <%= @override_mtu.to_i %>
