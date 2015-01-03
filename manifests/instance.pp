@@ -120,7 +120,7 @@ define tinc::instance(
       group   => 0,
       mode    => '0600';
     }
-    File<<| tag == "tinc_host_${name}" |>>
+    File<<| tag == "tinc_host_for_${name}" |>>
 
     concat::fragment{"tinc_conf_header_${name}":
       target  => $tinc_config,
