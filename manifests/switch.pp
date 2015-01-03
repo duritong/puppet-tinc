@@ -24,6 +24,7 @@ define tinc::switch(
   }
 
   if $ensure == 'present' {
+    include ::tinc
     require bridge_utils
     $real_tinc_bridge_interface = $tinc_bridge_interface ? {
       'absent'  => "br${name}",
