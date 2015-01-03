@@ -52,7 +52,7 @@ define tinc::instance(
     # only relevant for non-systemd systems
     concat::fragment{"tinc_net_${name}":
       ensure  => $boot_ensure,
-      line    => "${name}\n",
+      content => "${name}\n",
       target  => '/etc/tinc/nets.boot',
       require => File['/etc/tinc/nets.boot'],
       notify  => Service[$service_name],
