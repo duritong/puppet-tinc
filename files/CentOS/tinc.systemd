@@ -1,10 +1,12 @@
 [Unit]
-Description=Tinc daemon for network %i
+Description=Tinc VPN daemon for network %i
 After=network.target
 
 [Service]
-ExecStart=/usr/sbin/tincd -D --pidfile /run/tinc.%i.pid -n %i
+Type=forking
 Restart=on-failure
+ExecStart=/usr/sbin/tincd -n %i
+ExecStop=/usr/sbin/tincd -n %i -k
 
 [Install]
 WantedBy=multi-user.target
