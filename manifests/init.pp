@@ -1,6 +1,6 @@
 # configure base tinc
 class tinc(
-  $manage_shorewall = false,
+  $use_shorewall = false,
   $key_source_path  = '/var/lib/puppet/tinc_keys',
 ) {
   if $::operatingsystem == 'CentOS' and $::operatingsystemmajrelease >  6 {
@@ -13,7 +13,7 @@ class tinc(
     debian: { include tinc::debian }
     default: { include tinc::base }
   }
-  if $manage_shorewall {
+  if $use_shorewall {
     include shorewall::rules::tinc
   }
 }

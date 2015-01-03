@@ -63,7 +63,7 @@ define tinc::switch(
     }
 
 
-    if $tinc::manage_shorewall {
+    if $tinc::use_shorewall {
       $zone = $shorewall_zone ? {
         'absent'  => 'loc',
         default   => $shorewall_zone
