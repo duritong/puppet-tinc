@@ -99,7 +99,7 @@ define tinc::instance(
     if $tinc_address {
       $host_address = $tinc_address
     } else {
-      $int_name_escaped = gsub($tinc_interface,'.','_')
+      $int_name_escaped = regsubst($tinc_interface,'.','_','G')
       $host_address = getvar("::ipaddress_${int_name_escaped}")
     }
 
