@@ -66,7 +66,7 @@ define tinc::instance(
     mode    => '0600';
   }
 
-  concat::fragemt{"${fqdn_tinc}_for_${name}":
+  concat::fragment{"${fqdn_tinc}_for_${name}":
     ensure  => $ensure,
     target  => "/etc/tinc/${name}/tinc.conf",
     content => "${fqdn_tinc}\n",
