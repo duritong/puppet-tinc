@@ -2,8 +2,7 @@
 class tinc::base {
   package {'tinc':
     ensure => installed,
-  } -> file {'/etc/tinc/nets.boot':
-    ensure  => present,
+  } -> concat{'/etc/tinc/nets.boot':
     owner   => root,
     group   => 0,
     mode    => '0600';

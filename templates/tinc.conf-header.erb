@@ -1,0 +1,9 @@
+Name = <%= @fqdn_tinc %>
+AddressFamily = ipv4
+Device = /dev/net/tun
+#PMTU = 1440
+Mode = <%= @mode %>
+
+BindToAddress = <%= @host_address %> <%= @port %>
+BindToInterface = <%= @tinc_interface.to_s %>
+

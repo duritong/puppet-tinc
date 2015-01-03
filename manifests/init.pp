@@ -1,8 +1,8 @@
 # configure base tinc
 class tinc(
-  $manage_shorewall = false
+  $manage_shorewall = false,
+  $key_source_path  = '/var/lib/puppet/tinc_keys',
 ) {
-  require bridge_utils
   if $::operatingsystem == 'CentOS' and $::operatingsystemmajrelease >  6 {
     $uses_systemd = true
   } else {

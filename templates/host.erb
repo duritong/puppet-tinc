@@ -1,5 +1,5 @@
-Address = <%= scope.lookupvar("::ipaddress_#{@tinc_interface.gsub('.','_')}") %>
-Port = <%= @port %>
+Address = <%= @host_address %>
+Port    = <%= @port %>
 Compression = <%= @compression %> # 0=no,11=best lzo
 #
 
