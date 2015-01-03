@@ -16,14 +16,29 @@ define tinc::instance(
   $fqdn_tinc = regsubst($::fqdn,'[._-]+','','G')
   $tinc_config  = "/etc/tinc/${name}/tinc.conf"
 
+  # register net for bootup?
+  $boot_ensure = $ensure ? {
+    'present' => $connect_on_boot ? {
+      true    => 'present',
+      default => 'absent'
+    },
+    default => 'absent'
+  }
+
   # which service do we have to manage?
   if $tinc::uses_systemd {
     $service_name = "tincd@${name}"
     service{$service_name: }
+
     if $ensure == 'present' {
-      Service[$service_name]{
-        ensure => running,
-        enable => true,
+      # if we don't want to start
+      # on boot, we don't need to
+      # manage that part of the service
+      if $boot_ensure == 'present' {
+        Service[$service_name]{
+          ensure => running,
+          enable => true,
+        }
       }
     } else {
       Service[$service_name]{
@@ -34,25 +49,15 @@ define tinc::instance(
     }
   } else {
     $service_name = 'tinc'
+    # only relevant for non-systemd systems
+    concat::fragment{"tinc_net_${name}":
+      ensure  => $boot_ensure,
+      line    => "${name}\n",
+      target  => '/etc/tinc/nets.boot',
+      require => File['/etc/tinc/nets.boot'],
+      notify  => Service[$service_name],
+    }
   }
-
-
-  # register net for bootup
-  $boot_ensure = $ensure ? {
-    'present' => $connect_on_boot ? {
-      true    => 'present',
-      default => 'absent'
-    },
-    default => 'absent'
-  }
-  concat::fragment{"tinc_net_${name}":
-    ensure  => $boot_ensure,
-    line    => "${name}\n",
-    target  => '/etc/tinc/nets.boot',
-    require => File['/etc/tinc/nets.boot'],
-    notify  => Service[$service_name],
-  }
-
 
   file{"/etc/tinc/${name}":
     require => Package['tinc'],

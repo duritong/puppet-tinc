@@ -13,6 +13,9 @@ class tinc::centos inherits tinc::base {
       ensure => undef,
       enable => false,
     }
+    Concat['/etc/tinc/nets.boot']{
+      ensure => 'absent',
+    }
   } else {
     file {
       '/etc/sysconfig/tinc' :
