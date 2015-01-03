@@ -54,7 +54,6 @@ define tinc::instance(
       ensure  => $boot_ensure,
       content => "${name}\n",
       target  => '/etc/tinc/nets.boot',
-      require => File['/etc/tinc/nets.boot'],
       notify  => Service[$service_name],
     }
   }
