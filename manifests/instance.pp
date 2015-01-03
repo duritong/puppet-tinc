@@ -65,13 +65,6 @@ define tinc::instance(
     mode    => '0600';
   }
 
-  concat::fragment{"${fqdn_tinc}_for_${name}":
-    ensure  => $ensure,
-    target  => "/etc/tinc/${name}/tinc.conf",
-    content => "${fqdn_tinc}\n",
-    tag     => "tinc_vpn_${name}"
-  }
-
   if $ensure == 'present' {
     File["/etc/tinc/${name}"]{
       ensure  => directory,
