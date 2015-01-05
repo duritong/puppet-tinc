@@ -1,13 +1,6 @@
 # manage centos specific things
 class tinc::centos inherits tinc::base {
   if $tinc::uses_systemd {
-    file{'/etc/systemd/system/tincd@.service':
-      source  => 'puppet:///modules/tinc/CentOS/tinc.systemd',
-      require => Package['tinc'],
-      owner   => root,
-      group   => 0,
-      mode    => '0644';
-    }
     # systemd manages per instance
     Service['tinc'] {
       ensure => undef,
