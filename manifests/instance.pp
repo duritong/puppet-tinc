@@ -112,15 +112,15 @@ define tinc::instance(
         group   => 0,
         mode    => '0600';
     }
-    # export and collect all the keys of this net
-    @@file { "/etc/tinc/${name}/hosts/${fqdn_tinc}":
-      content => template('tinc/host.erb'),
-      tag     => "tinc_host_for_${name}",
-      owner   => root,
-      group   => 0,
-      mode    => '0600';
+    # export this host and collect all the other hosts
+    @@tinc::host{"${fqdn_tinc}@${name}":
+      port        => $port,
+      compression => $compression,
+      address     => $host_address,
+      public_key  => $tinc_keys[1],
+      tag         => "tinc::host_for_${name}",
     }
-    File<<| tag == "tinc_host_for_${name}" |>>
+    Tinc::Host<<| tag == "tinc::host_for_${name}" |>>
 
     concat::fragment{"tinc_conf_header_${name}":
       target  => $tinc_config,
