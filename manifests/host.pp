@@ -4,6 +4,7 @@
 #
 define tinc::host(
   $public_key,
+  $address,
   $ensure      = present,
   $port        = 655,
   $compression = 10,
