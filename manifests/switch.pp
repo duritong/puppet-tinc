@@ -5,6 +5,7 @@ define tinc::switch(
   $tinc_interface           = 'eth0',
   $tinc_address             = undef,
   $port                     = '655',
+  $port_to_export           = '655',
   $tinc_internal_interface  = 'eth1',
   $tinc_internal_ip         = 'absent',
   $tinc_internal_netmask    = 'absent',
@@ -19,6 +20,7 @@ define tinc::switch(
     tinc_interface  => $tinc_interface,
     tinc_address    => $tinc_address,
     port            => $port,
+    port_to_export  => $port_to_export,
     compression     => $compression,
     mode            => 'switch',
   }

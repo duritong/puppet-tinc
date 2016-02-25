@@ -5,6 +5,7 @@ define tinc::instance(
   $tinc_interface           = 'eth0',
   $tinc_address             = undef,
   $port                     = '655',
+  $port_to_export           = '655',
   $compression              = '10',
   $mode                     = 'switch',
   $tinc_up_content          = undef,
@@ -114,7 +115,7 @@ define tinc::instance(
     }
     # export this host and collect all the other hosts
     @@tinc::host{"${fqdn_tinc}@${name}":
-      port        => $port,
+      port        => $port_to_export,
       compression => $compression,
       address     => $host_address,
       public_key  => $tinc_keys[1],
