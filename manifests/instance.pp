@@ -4,6 +4,7 @@ define tinc::instance(
   $connect_on_boot          = true,
   $tinc_interface           = 'eth0',
   $tinc_address             = undef,
+  $tinc_address_to_export   = undef,
   $port                     = '655',
   $port_to_export           = '655',
   $compression              = '10',
@@ -95,6 +96,11 @@ define tinc::instance(
       $int_name_escaped = regsubst($tinc_interface,'\.','_','G')
       $host_address = getvar("::ipaddress_${int_name_escaped}")
     }
+    if $tinc_address_to_export {
+      $export_addr = $tinc_address_to_export
+    } else {
+      $export_addr = $host_address
+    }
 
     # get the keys
     # [ priv, pub ]
@@ -117,7 +123,7 @@ define tinc::instance(
     @@tinc::host{"${fqdn_tinc}@${name}":
       port        => $port_to_export,
       compression => $compression,
-      address     => $host_address,
+      address     => $export_addr,
       public_key  => $tinc_keys[1],
       tag         => "tinc::host_for_${name}",
     }

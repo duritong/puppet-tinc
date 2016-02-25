@@ -5,6 +5,7 @@ define tinc::switch(
   $tinc_interface           = 'eth0',
   $tinc_address             = undef,
   $port                     = '655',
+  $tinc_address_to_export   = undef,
   $port_to_export           = '655',
   $tinc_internal_interface  = 'eth1',
   $tinc_internal_ip         = 'absent',
@@ -15,14 +16,15 @@ define tinc::switch(
 ){
 
   tinc::instance{$name:
-    ensure          => $ensure,
-    connect_on_boot => $connect_on_boot,
-    tinc_interface  => $tinc_interface,
-    tinc_address    => $tinc_address,
-    port            => $port,
-    port_to_export  => $port_to_export,
-    compression     => $compression,
-    mode            => 'switch',
+    ensure                 => $ensure,
+    connect_on_boot        => $connect_on_boot,
+    tinc_interface         => $tinc_interface,
+    tinc_address           => $tinc_address,
+    tinc_address_to_export => $tinc_address_to_export,
+    port                   => $port,
+    port_to_export         => $port_to_export,
+    compression            => $compression,
+    mode                   => 'switch',
   }
 
   if $ensure == 'present' {
