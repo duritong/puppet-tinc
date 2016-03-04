@@ -9,6 +9,7 @@ define tinc::instance(
   $port_to_export           = '655',
   $compression              = '10',
   $mode                     = 'switch',
+  $options                  = {},
   $tinc_up_content          = undef,
   $tinc_down_content        = undef,
 ){

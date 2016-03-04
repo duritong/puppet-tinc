@@ -12,6 +12,7 @@ define tinc::switch(
   $tinc_internal_netmask    = 'absent',
   $tinc_bridge_interface    = 'absent',
   $compression              = '10',
+  $options                  = {},
   $shorewall_zone           = 'absent'
 ){
 
@@ -25,6 +26,7 @@ define tinc::switch(
     port_to_export         => $port_to_export,
     compression            => $compression,
     mode                   => 'switch',
+    options                => $options,
   }
 
   if $ensure == 'present' {
