@@ -30,7 +30,7 @@ define tinc::instance(
 
   # which service do we have to manage?
   if $tinc::uses_systemd {
-    $service_name = "tincd@${name}"
+    $service_name = "tinc@${name}"
     service{$service_name: }
 
     if $ensure == 'present' {
