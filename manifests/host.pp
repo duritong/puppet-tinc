@@ -19,7 +19,7 @@ define tinc::host(
 
     include tinc
     if $tinc::uses_systemd {
-      $service_name = "tincd@${net}"
+      $service_name = "tinc@${net}"
     } else {
       $service_name = 'tinc'
     }
