@@ -3,7 +3,7 @@ class tinc(
   $use_shorewall   = false,
   $key_source_path = '/var/lib/puppet/tinc_keys',
 ) {
-  if $::operatingsystem == 'CentOS' and $::operatingsystemmajrelease >  6 {
+  if $::operatingsystem == 'CentOS' and versioncmp($::operatingsystemmajrelease,'6') > 0 {
     $uses_systemd = true
   } else {
     $uses_systemd = false
