@@ -94,8 +94,7 @@ define tinc::instance(
     if $tinc_address {
       $host_address = $tinc_address
     } else {
-      $int_name_escaped = regsubst($tinc_interface,'\.','_','G')
-      $host_address = getvar("::ipaddress_${int_name_escaped}")
+      $host_address = $facts['networking']['interfaces'][$tinc_interface]['ip']
     }
     if $tinc_address_to_export {
       $export_addr = $tinc_address_to_export
