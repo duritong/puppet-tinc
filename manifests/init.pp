@@ -9,8 +9,8 @@ class tinc(
     $uses_systemd = false
   }
   case $::operatingsystem {
-    centos: { include tinc::centos }
-    debian: { include tinc::debian }
+    'CentOS': { include tinc::centos }
+    'Debian': { include tinc::debian }
     default: { include tinc::base }
   }
   if $use_shorewall {
