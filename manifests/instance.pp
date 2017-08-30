@@ -53,11 +53,12 @@ define tinc::instance(
   } else {
     $service_name = 'tinc'
     # only relevant for non-systemd systems
-    concat::fragment{"tinc_net_${name}":
-      ensure  => $boot_ensure,
-      content => "${name}\n",
-      target  => '/etc/tinc/nets.boot',
-      notify  => Service[$service_name],
+    if $boot_ensure == 'present' {
+      concat::fragment{"tinc_net_${name}":
+        content => "${name}\n",
+        target  => '/etc/tinc/nets.boot',
+        notify  => Service[$service_name],
+      }
     }
   }
 
