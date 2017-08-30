@@ -75,10 +75,10 @@ define tinc::instance(
       notify  => Service[$service_name],
     }
     concat{$tinc_config:
-      notify  => Service[$service_name],
-      owner   => root,
-      group   => 0,
-      mode    => '0600';
+      notify => Service[$service_name],
+      owner  => root,
+      group  => 0,
+      mode   => '0600';
     }
 
     file{"/etc/tinc/${name}/hosts":
