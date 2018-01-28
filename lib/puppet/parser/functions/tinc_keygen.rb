@@ -24,7 +24,7 @@ Puppet::Parser::Functions::newfunction(:tinc_keygen, :type => :rvalue, :doc =>
       FileUtils.mkdir_p(dir, :mode => 0700)
     end
     unless [private_key_path,public_key_path].all?{|path| File.exists?(path) }
-      output = Puppet::Util.execute(['/usr/sbin/tincd', '-c', dir, '-n', name, '-K'])
+      output = Puppet::Util::Execution.execute(['/usr/sbin/tincd', '-c', dir, '-n', name, '-K'])
       raise Puppet::ParseError, "Something went wrong during key generation! Output: #{output}" unless output =~ /Generating .* bits keys/
     end
     [File.read(private_key_path),File.read(public_key_path)]
