@@ -12,7 +12,7 @@ define tinc::host(
   # if absent the net should
   # clean it up by itself
   if $ensure == 'present' {
-    validate_re($name,'.+@.+')
+    assert_type(Regexp[/.+@.+/], $name)
     $sp_name = split($name,'@')
     $fqdn_tinc = $sp_name[0]
     $net = $sp_name[1]
