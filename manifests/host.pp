@@ -17,7 +17,7 @@ define tinc::host(
     $fqdn_tinc = $sp_name[0]
     $net = $sp_name[1]
 
-    include tinc
+    include ::tinc
     if $tinc::uses_systemd {
       $service_name = "tinc@${net}"
     } else {
