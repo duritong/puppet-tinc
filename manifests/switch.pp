@@ -1,19 +1,19 @@
 # create a tinc vpn switch
 define tinc::switch(
-  $ensure                   = 'present',
-  $connect_on_boot          = true,
-  $tinc_interface           = 'eth0',
-  $tinc_address             = undef,
-  $port                     = '655',
-  $tinc_address_to_export   = undef,
-  $port_to_export           = '655',
-  $tinc_internal_interface  = 'eth1',
-  $tinc_internal_ip         = 'absent',
-  $tinc_internal_netmask    = 'absent',
-  $tinc_bridge_interface    = 'absent',
-  $compression              = '10',
-  $options                  = {},
-  $shorewall_zone           = 'absent'
+  $ensure                  = 'present',
+  $connect_on_boot         = true,
+  $tinc_interface          = $facts['networking']['primary'],
+  $tinc_address            = undef,
+  $port                    = '655',
+  $tinc_address_to_export  = undef,
+  $port_to_export          = '655',
+  $tinc_internal_interface = $facts['networking']['interfaces'].keys.filter |$i| { $i != 'lo' and $i != $facts['networking']['primary'] }[0],
+  $tinc_internal_ip        = 'absent',
+  $tinc_internal_netmask   = 'absent',
+  $tinc_bridge_interface   = 'absent',
+  $compression             = '10',
+  $options                 = {},
+  $shorewall_zone          = 'absent'
 ){
 
   tinc::instance{$name:
@@ -30,7 +30,7 @@ define tinc::switch(
   }
 
   if $ensure == 'present' {
-    include ::tinc
+    include tinc
     require bridge_utils
     $real_tinc_bridge_interface = $tinc_bridge_interface ? {
       'absent'  => "br${name}",
@@ -72,8 +72,8 @@ define tinc::switch(
 
     if $tinc::use_shorewall {
       $zone = $shorewall_zone ? {
-        'absent'  => 'loc',
-        default   => $shorewall_zone
+        'absent' => 'loc',
+        default  => $shorewall_zone
       }
       shorewall::interface { $real_tinc_bridge_interface:
         zone    => $zone,

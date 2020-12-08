@@ -1,19 +1,19 @@
 # create a tinc vpn net
 define tinc::instance(
-  $ensure                   = 'present',
-  $connect_on_boot          = true,
-  $tinc_interface           = 'eth0',
-  $tinc_address             = undef,
-  $tinc_address_to_export   = undef,
-  $port                     = '655',
-  $port_to_export           = '655',
-  $compression              = '10',
-  $mode                     = 'switch',
-  $options                  = {},
-  $tinc_up_content          = undef,
-  $tinc_down_content        = undef,
+  $ensure                 = 'present',
+  $connect_on_boot        = true,
+  $tinc_interface         = $facts['networking']['primary'],
+  $tinc_address           = undef,
+  $tinc_address_to_export = undef,
+  $port                   = '655',
+  $port_to_export         = '655',
+  $compression            = '10',
+  $mode                   = 'switch',
+  $options                = {},
+  $tinc_up_content        = undef,
+  $tinc_down_content      = undef,
 ){
-  include ::tinc
+  include tinc
 
   # needed in template tinc.conf.erb
   $fqdn_tinc = regsubst($::fqdn,'[._-]+','','G')
@@ -71,8 +71,8 @@ define tinc::instance(
 
   if $ensure == 'present' {
     File["/etc/tinc/${name}"]{
-      ensure  => directory,
-      notify  => Service[$service_name],
+      ensure => directory,
+      notify => Service[$service_name],
     }
     concat{$tinc_config:
       notify => Service[$service_name],
