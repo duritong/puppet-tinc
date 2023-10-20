@@ -14,7 +14,7 @@ Puppet::Parser::Functions::newfunction(:tinc_keygen, :type => :rvalue, :doc =>
     end
     private_key_path = File.join(dir,"rsa_key.priv")
     public_key_path = File.join(dir,"rsa_key.pub")
-    raise Puppet::ParseError, "Either only the private or only the public key exists" if File.exists?(private_key_path) ^ File.exists?(public_key_path)
+    raise Puppet::ParseError, "Either only the private or only the public key exists" if File.exist?(private_key_path) ^ File.exist?(public_key_path)
     [private_key_path,public_key_path].each do |path|
       raise Puppet::ParseError, "#{path} is a directory" if File.directory?(path)
     end
@@ -23,7 +23,7 @@ Puppet::Parser::Functions::newfunction(:tinc_keygen, :type => :rvalue, :doc =>
       require 'fileutils'
       FileUtils.mkdir_p(dir, :mode => 0700)
     end
-    unless [private_key_path,public_key_path].all?{|path| File.exists?(path) }
+    unless [private_key_path,public_key_path].all?{|path| File.exist?(path) }
       output = Puppet::Util::Execution.execute(['/usr/sbin/tincd', '-c', dir, '-n', name, '-K'])
       raise Puppet::ParseError, "Something went wrong during key generation! Output: #{output}" unless output =~ /Generating .* bits keys/
     end
