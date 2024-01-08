@@ -7,7 +7,7 @@ define tinc::switch(
   $port                    = '655',
   $tinc_address_to_export  = undef,
   $port_to_export          = '655',
-  $tinc_internal_interface = $facts['networking']['interfaces'].keys.filter |$i| { $i != 'lo' and $i != $facts['networking']['primary'] }[0],
+  $tinc_internal_interface = $facts['networking']['interfaces'].keys.filter |$i| { $i != 'lo' and $i != $facts['networking']['primary'] and $i !~ /^br/ }[0],
   $tinc_internal_ip        = 'absent',
   $tinc_internal_netmask   = 'absent',
   $tinc_bridge_interface   = 'absent',
